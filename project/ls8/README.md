@@ -95,7 +95,7 @@ instruction opcode. See the LS-8 spec for details.
 
 ### Step 3: Implement the `HLT` instruction handler
 
-Down in the `HLT()` function, you need to halt the CPU. For now, this just means
+In your `HLT` handler code, you need to halt the CPU. For now, this just means
 calling `stopClock()` to stop the CPU clock. The emulator should exit
 automatically once the clock stops.
 
