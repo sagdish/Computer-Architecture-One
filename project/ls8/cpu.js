@@ -2,6 +2,10 @@
  * LS-8 v2.0 emulator skeleton code
  */
 
+const LDI = 0b10011001;
+const PRN = 0b01000011;
+const MUL = 0b10101010;
+const HLT = 0b00000001;
 /**
  * Class for simulating a simple Computer (CPU & memory)
  */
@@ -53,11 +57,12 @@ class CPU {
      * op can be: ADD SUB MUL DIV INC DEC CMP
      */
     alu(op, regA, regB) {
-        switch (op) {
-            case 'MUL':
-                // !!! IMPLEMENT ME
-                break;
-        }
+      switch (op) {
+        case 'MUL':
+          regA = regA * regB;
+          return regA;
+          break;
+      }
     }
 
     /**
@@ -68,6 +73,7 @@ class CPU {
         // from the memory address pointed to by the PC. (I.e. the PC holds the
         // index into memory of the instruction that's about to be executed
         // right now.)
+        const IR = this.ram.read(this.PC);
 
         // !!! IMPLEMENT ME
 
@@ -78,11 +84,43 @@ class CPU {
         // needs them.
 
         // !!! IMPLEMENT ME
-
+        const operandA = this.ram.read(this.PC + 1);
+        const operandB = this.ram.read(this.PC + 2);
+        
         // Execute the instruction. Perform the actions for the instruction as
         // outlined in the LS-8 spec.
 
         // !!! IMPLEMENT ME
+        
+        //console.log(IR);
+        switch(IR) {
+          case LDI:
+            this.reg[operandA] = operandB;
+            //console.log(this.reg[operandA]);
+            //this.PC += 3;
+            break;
+            
+          case MUL:
+            //console.log('MUL ', operandA);
+            //this.reg[operandA] = this.reg[operandA] * this.reg[operandB];
+            this.reg[operandA] = this.alu("MUL", this.reg[operandA], this.reg[operandB]);
+            break;
+            
+          case PRN:
+            console.log('PRN ', this.reg[operandA]);
+            //this.PC += 2;
+            break;
+            
+          case HLT:
+            this.stopClock();
+            //this.PC += 1;
+            break;
+            
+          default:
+            console.log("unknown instruction: " + IR.toString(2));
+            this.stopClock();
+            return;
+        }
 
         // Increment the PC register to go to the next instruction. Instructions
         // can be 1, 2, or 3 bytes long. Hint: the high 2 bits of the
@@ -90,6 +128,9 @@ class CPU {
         // for any particular instruction.
         
         // !!! IMPLEMENT ME
+        const instLen = (IR >> 6) + 1;
+        //console.log(this.PC);
+        this.PC += instLen;
     }
 }
 
