@@ -6,6 +6,9 @@ const LDI = 0b10011001;
 const PRN = 0b01000011;
 const MUL = 0b10101010;
 const HLT = 0b00000001;
+const PUSH = 0b01001101;
+const POP = 0b01001100;
+
 /**
  * Class for simulating a simple Computer (CPU & memory)
  */
@@ -18,9 +21,10 @@ class CPU {
         this.ram = ram;
 
         this.reg = new Array(8).fill(0); // General-purpose registers R0-R7
-        
+        this.reg[7] = 244;
         // Special-purpose registers
         this.PC = 0; // Program Counter
+        //this.SP = this.reg[7];
     }
     
     /**
@@ -86,7 +90,7 @@ class CPU {
         // !!! IMPLEMENT ME
         const operandA = this.ram.read(this.PC + 1);
         const operandB = this.ram.read(this.PC + 2);
-        
+        const SP = this.reg[7];
         // Execute the instruction. Perform the actions for the instruction as
         // outlined in the LS-8 spec.
 
@@ -103,6 +107,7 @@ class CPU {
           case MUL:
             //console.log('MUL ', operandA);
             //this.reg[operandA] = this.reg[operandA] * this.reg[operandB];
+            console.log(this.SP);
             this.reg[operandA] = this.alu("MUL", this.reg[operandA], this.reg[operandB]);
             break;
             
@@ -115,6 +120,11 @@ class CPU {
             this.stopClock();
             //this.PC += 1;
             break;
+            
+          case PUSH:
+            SP--;
+            
+            
             
           default:
             console.log("unknown instruction: " + IR.toString(2));
