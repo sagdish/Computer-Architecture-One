@@ -1,6 +1,23 @@
 const RAM = require('./ram');
 const CPU = require('./cpu');
 
+const fs = require('fs');
+
+const file = process.argv 
+
+if (file.length !== 3) {
+  console.error("error: please provide a file");
+  process.exit(1);
+}
+const fileName = file[2];
+
+const filedata = fs.readFileSync(fileName, "utf8");
+
+const arr = filedata.trim().split(/[\r\n\s\D]+/g).filter(item => {
+  return item.length === 8;
+});
+
+
 /**
  * Load an LS8 program into memory
  *
@@ -17,7 +34,7 @@ function loadMemory() {
         // "01000011", // PRN R0    Print the value in R0
         // "00000000",
         // "00000001"  // HLT       Halt and quit
-        
+    
         // mult.ls8
         '10011001', // LDI R0,8
         '00000000',
@@ -34,8 +51,8 @@ function loadMemory() {
     ];
 
     // Load the program into the CPU's memory a byte at a time
-    for (let i = 0; i < program.length; i++) {
-        cpu.poke(i, parseInt(program[i], 2));
+    for (let i = 0; i < arr.length; i++) {
+        cpu.poke(i, parseInt(arr[i], 2));
     }
 }
 
