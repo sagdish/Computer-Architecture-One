@@ -98,7 +98,7 @@ class CPU {
         // !!! IMPLEMENT ME
         const operandA = this.ram.read(this.PC + 1);
         const operandB = this.ram.read(this.PC + 2);
-        //let SP = this.reg[7];
+        let nextIns = true;
         // Execute the instruction. Perform the actions for the instruction as
         // outlined in the LS-8 spec.
 
@@ -113,13 +113,14 @@ class CPU {
             break;
             
           case MUL:
-            //console.log('MUL ', operandA);
-            //this.reg[operandA] = this.reg[operandA] * this.reg[operandB];
             this.alu("MUL", operandA, operandB);
             break;
             
           case ADD:
             this.alu("ADD", operandA, operandB);
+            if (!nextIns) {
+              nextIns = true;
+            }
             break;
             
           case PRN:
@@ -133,21 +134,25 @@ class CPU {
             break;
             
           case PUSH:
-            // SP--;
-            // this.ram[SP] = this.reg[operandA];
-            // this.reg[7] = SP;
-            
             this.reg[SP]--;
             this.ram.write(this.reg[SP], this.reg[operandA]);
             break;
           
           case POP:
-            // this.reg[operandA] = this.ram[SP];
-            // SP++;
-            // this.reg[7] = SP;
-            
             this.reg[operandA] = this.ram.read(this.reg[SP])
             this.reg[SP]++;
+            break;
+            
+          case CALL:
+            this.reg[SP]--;
+            this.ram.write(this.reg[SP], this.PC + 2);
+            this.PC = this.reg[operandA];
+            
+            nextIns = false;
+            break;
+            
+          case RET:
+            this.PC = this.reg[7];
             break;
             
           default:
@@ -162,9 +167,10 @@ class CPU {
         // for any particular instruction.
         
         // !!! IMPLEMENT ME
-        const instLen = (IR >> 6) + 1;
-        //console.log(this.PC);
-        this.PC += instLen;
+        if (nextIns) {
+          const instLen = (IR >> 6) + 1;
+          this.PC += instLen;
+        }
     }
 }
 
