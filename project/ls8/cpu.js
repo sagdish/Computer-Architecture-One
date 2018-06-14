@@ -21,7 +21,7 @@ class CPU {
         this.ram = ram;
 
         this.reg = new Array(8).fill(0); // General-purpose registers R0-R7
-        this.reg[7] = 244;
+        this.reg[7] = 0xf4; //244
         // Special-purpose registers
         this.PC = 0; // Program Counter
         //this.SP = this.reg[7];
@@ -63,8 +63,7 @@ class CPU {
     alu(op, regA, regB) {
       switch (op) {
         case 'MUL':
-          regA = regA * regB;
-          return regA;
+          this.reg[regA] *= this.reg[regB] & 0xff;
           break;
       }
     }
@@ -107,8 +106,7 @@ class CPU {
           case MUL:
             //console.log('MUL ', operandA);
             //this.reg[operandA] = this.reg[operandA] * this.reg[operandB];
-            console.log(this.SP);
-            this.reg[operandA] = this.alu("MUL", this.reg[operandA], this.reg[operandB]);
+            this.alu("MUL", operandA, operandB);
             break;
             
           case PRN:
@@ -126,6 +124,10 @@ class CPU {
             this.ram[SP] = this.reg[operandA];
             this.reg[7] = SP;
             break;
+            
+            // this.reg[7]--;
+            // this.ram.write(this.reg[7], this.reg[operandA]);
+            // break;
           
           case POP:
             this.reg[operandA] = this.ram[SP];
