@@ -85,7 +85,7 @@ class CPU {
         // from the memory address pointed to by the PC. (I.e. the PC holds the
         // index into memory of the instruction that's about to be executed
         // right now.)
-        const IR = this.ram.read(this.PC);
+        let IR = this.ram.read(this.PC);
 
         // !!! IMPLEMENT ME
 
@@ -124,7 +124,7 @@ class CPU {
             break;
             
           case PRN:
-            console.log('PRN ', this.reg[operandA]);
+            console.log(this.reg[operandA]);
             //this.PC += 2;
             break;
             
@@ -146,13 +146,14 @@ class CPU {
           case CALL:
             this.reg[SP]--;
             this.ram.write(this.reg[SP], this.PC + 2);
+            console.log(this.ram[this.reg[SP]]);
             this.PC = this.reg[operandA];
             
             nextIns = false;
             break;
             
           case RET:
-            this.PC = this.reg[7];
+            this.PC = this.ram.read(this.reg[SP]);
             break;
             
           default:
