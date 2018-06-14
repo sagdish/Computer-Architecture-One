@@ -8,6 +8,11 @@ const MUL = 0b10101010;
 const HLT = 0b00000001;
 const PUSH = 0b01001101;
 const POP = 0b01001100;
+const CALL = 0b01001000;
+const RET = 0b00001001;
+const ADD = 0b10101000;
+
+const SP = 7;
 
 /**
  * Class for simulating a simple Computer (CPU & memory)
@@ -21,7 +26,7 @@ class CPU {
         this.ram = ram;
 
         this.reg = new Array(8).fill(0); // General-purpose registers R0-R7
-        this.reg[7] = 0xf4; //244
+        this.reg[SP] = 0xf4; //244
         // Special-purpose registers
         this.PC = 0; // Program Counter
         //this.SP = this.reg[7];
@@ -65,6 +70,10 @@ class CPU {
         case 'MUL':
           this.reg[regA] *= this.reg[regB] & 0xff;
           break;
+          
+        case 'ADD':
+          this.reg[regA] += this.reg[regB] & 0xff;
+          break;
       }
     }
 
@@ -89,7 +98,7 @@ class CPU {
         // !!! IMPLEMENT ME
         const operandA = this.ram.read(this.PC + 1);
         const operandB = this.ram.read(this.PC + 2);
-        let SP = this.reg[7];
+        //let SP = this.reg[7];
         // Execute the instruction. Perform the actions for the instruction as
         // outlined in the LS-8 spec.
 
@@ -109,6 +118,10 @@ class CPU {
             this.alu("MUL", operandA, operandB);
             break;
             
+          case ADD:
+            this.alu("ADD", operandA, operandB);
+            break;
+            
           case PRN:
             console.log('PRN ', this.reg[operandA]);
             //this.PC += 2;
@@ -120,19 +133,21 @@ class CPU {
             break;
             
           case PUSH:
-            SP--;
-            this.ram[SP] = this.reg[operandA];
-            this.reg[7] = SP;
-            break;
+            // SP--;
+            // this.ram[SP] = this.reg[operandA];
+            // this.reg[7] = SP;
             
-            // this.reg[7]--;
-            // this.ram.write(this.reg[7], this.reg[operandA]);
-            // break;
+            this.reg[SP]--;
+            this.ram.write(this.reg[SP], this.reg[operandA]);
+            break;
           
           case POP:
-            this.reg[operandA] = this.ram[SP];
-            SP++;
-            this.reg[7] = SP;
+            // this.reg[operandA] = this.ram[SP];
+            // SP++;
+            // this.reg[7] = SP;
+            
+            this.reg[operandA] = this.ram.read(this.reg[SP])
+            this.reg[SP]++;
             break;
             
           default:

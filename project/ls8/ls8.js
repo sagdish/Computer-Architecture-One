@@ -6,7 +6,7 @@ const fs = require('fs');
 const file = process.argv 
 
 if (file.length !== 3) {
-  console.error("error: please provide a file");
+  console.error("error, please provide a file: <filename>.ls8");
   process.exit(1);
 }
 const fileName = file[2];
