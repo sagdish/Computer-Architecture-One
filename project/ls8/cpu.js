@@ -90,7 +90,7 @@ class CPU {
         // !!! IMPLEMENT ME
         const operandA = this.ram.read(this.PC + 1);
         const operandB = this.ram.read(this.PC + 2);
-        const SP = this.reg[7];
+        let SP = this.reg[7];
         // Execute the instruction. Perform the actions for the instruction as
         // outlined in the LS-8 spec.
 
@@ -123,8 +123,15 @@ class CPU {
             
           case PUSH:
             SP--;
-            
-            
+            this.ram[SP] = this.reg[operandA];
+            this.reg[7] = SP;
+            break;
+          
+          case POP:
+            this.reg[operandA] = this.ram[SP];
+            SP++;
+            this.reg[7] = SP;
+            break;
             
           default:
             console.log("unknown instruction: " + IR.toString(2));
