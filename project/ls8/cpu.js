@@ -13,9 +13,9 @@ const RET = 0b00001001;
 const ADD = 0b10101000;
 
 const CMP = 0b10100000;
-const JMP = 
-const JEQ
-const JNE
+const JMP = 0b01010000;
+const JEQ = 0b01010001;
+const JNE = 0b01010010;
 
 const SP = 7;
 
@@ -148,6 +148,35 @@ class CPU {
           case POP:
             this.reg[operandA] = this.ram.read(this.reg[SP])
             this.reg[SP]++;
+            break;
+            
+          case CMP:
+            if (this.reg[operandA] === this.reg[operandB]) {
+              this.E = 1;
+            } else if (this.reg[operandA] < this.reg[operandB]) {
+              this.E = 1;
+            } else if (this.reg[operandA] > this.reg[operandB]) {
+              this.G = 1;
+            }
+            break;
+            
+          case JMP:
+            this.PC = this.reg[operandA];
+            nextIns = false;
+            break;
+            
+          case JEQ:
+            if (this.E === 1) {
+              this.PC = this.reg[operandA];
+              nextIns = false;
+            }
+            break;
+            
+          case JNE:
+            if (this.E === 0) {
+              this.PC = this.reg[operandA];
+              nextIns = false;
+            }
             break;
             
           case CALL:
