@@ -12,6 +12,11 @@ const CALL = 0b01001000;
 const RET = 0b00001001;
 const ADD = 0b10101000;
 
+const CMP = 0b10100000;
+const JMP = 
+const JEQ
+const JNE
+
 const SP = 7;
 
 /**
@@ -29,7 +34,9 @@ class CPU {
         this.reg[SP] = 0xf4; //244
         // Special-purpose registers
         this.PC = 0; // Program Counter
-        //this.SP = this.reg[7];
+        this.L = 0;
+        this.G = 0;
+        this.E = 0;
     }
     
     /**
@@ -146,7 +153,8 @@ class CPU {
           case CALL:
             this.reg[SP]--;
             this.ram.write(this.reg[SP], this.PC + 2);
-            console.log(this.ram[this.reg[SP]]);
+            //console.log(this.PC+2);
+            //console.log(this.ram[this.reg[SP]]);
             this.PC = this.reg[operandA];
             
             nextIns = false;
@@ -154,6 +162,8 @@ class CPU {
             
           case RET:
             this.PC = this.ram.read(this.reg[SP]);
+            this.reg[SP]--;
+            //console.log('this.PC ', this.PC);
             break;
             
           default:
