@@ -125,9 +125,9 @@ class CPU {
             
           case ADD:
             this.alu("ADD", operandA, operandB);
-            if (!nextIns) {
-              nextIns = true;
-            }
+            // if (!nextIns) {
+            //   nextIns = true;
+            // }
             break;
             
           case PRN:
@@ -154,7 +154,7 @@ class CPU {
             if (this.reg[operandA] === this.reg[operandB]) {
               this.E = 1;
             } else if (this.reg[operandA] < this.reg[operandB]) {
-              this.E = 1;
+              this.L = 1;
             } else if (this.reg[operandA] > this.reg[operandB]) {
               this.G = 1;
             }
